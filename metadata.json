@@ -1,0 +1,6 @@
+{
+  "name": "PIPO ULTRA PRO - تنزيل الفيديوهات وتحسين الجودة بالذكاء الاصطناعي",
+  "description": "منصة PIPO ULTRA PRO المتطورة لتنزيل الفيديوهات من جميع المواقع (TikTok, Instagram, YouTube, Facebook, Twitter) بدون علامة مائية وتحسين ورفع جودة الفيديو إلى 4K بالذكاء الاصطناعي.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
