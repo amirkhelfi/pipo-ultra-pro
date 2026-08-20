@@ -8,6 +8,9 @@ import { BatchDownloaderView } from './components/BatchDownloaderView';
 import { DownloadHistoryView } from './components/DownloadHistoryView';
 import { AIVideoAssistantModal } from './components/AIVideoAssistantModal';
 import { DeveloperConsoleView } from './components/DeveloperConsoleView';
+import { LiveBroadcastBanner } from './components/LiveBroadcastBanner';
+import { BroadcastNotificationToast } from './components/BroadcastNotificationToast';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { 
   Download, Sparkles, ShieldCheck, Zap, ArrowDownToLine, 
   Layers, Music, Globe, CheckCircle2, Bot, Terminal
@@ -23,6 +26,50 @@ export default function App() {
 
   // Modals
   const [isAIOpen, setIsAIOpen] = useState<boolean>(false);
+  const [isInstallModalOpen, setIsInstallModalOpen] = useState<boolean>(false);
+
+  // Real-time visitor tracking and telemetry ping
+  useEffect(() => {
+    const trackVisitor = async () => {
+      try {
+        const screenResolution = `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio}x)`;
+        const language = navigator.language || 'ar';
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        const referrer = document.referrer || 'Direct Entry';
+
+        await fetch('/api/track-visit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            screenResolution,
+            language,
+            timeZone,
+            activeTab,
+            referrer
+          })
+        });
+      } catch (err) {
+        // Silent error
+      }
+    };
+
+    trackVisitor();
+
+    // Heartbeat every 30 seconds to maintain online telemetry status
+    const heartbeatInterval = setInterval(async () => {
+      try {
+        await fetch('/api/track-visit/heartbeat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ activeTab })
+        });
+      } catch {
+        // Silent error
+      }
+    }, 30000);
+
+    return () => clearInterval(heartbeatInterval);
+  }, [activeTab]);
 
   // Local storage history
   const [history, setHistory] = useState<DownloadHistoryItem[]>(() => {
@@ -98,6 +145,9 @@ export default function App() {
   return (
     <div className={`min-h-screen bg-[#070A11] text-slate-100 flex flex-col antialiased ${isArabic ? 'font-sans' : 'font-sans'}`} dir={isArabic ? 'rtl' : 'ltr'}>
       
+      {/* Live Broadcast Header Ticker & Audio Player */}
+      <LiveBroadcastBanner isArabic={isArabic} />
+
       {/* Top Navigation */}
       <Navbar
         activeTab={activeTab}
@@ -111,6 +161,7 @@ export default function App() {
         isArabic={isArabic}
         setIsArabic={setIsArabic}
         historyCount={history.length}
+        onOpenInstallModal={() => setIsInstallModalOpen(true)}
       />
 
       {/* Main App Container */}
@@ -221,6 +272,17 @@ export default function App() {
         isOpen={isAIOpen}
         onClose={() => setIsAIOpen(false)}
         isArabic={isArabic}
+      />
+
+      {/* PWA App Installation Prompt (تثبيت تطبيق PIPO في خلفية الهاتف) */}
+      <PWAInstallPrompt
+        isOpen={isInstallModalOpen}
+        onClose={() => setIsInstallModalOpen(false)}
+      />
+
+      {/* Real-time In-App Broadcast Notification Toasts (إذاعة الإشعارات داخل الموقع) */}
+      <BroadcastNotificationToast
+        onOpenInstallModal={() => setIsInstallModalOpen(true)}
       />
 
     </div>

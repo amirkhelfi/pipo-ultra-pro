@@ -11,6 +11,7 @@ interface NavbarProps {
   isArabic: boolean;
   setIsArabic: (val: boolean) => void;
   historyCount: number;
+  onOpenInstallModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -19,6 +20,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   isArabic,
   setIsArabic,
   historyCount,
+  onOpenInstallModal,
 }) => {
   const tabs = [
     {
@@ -91,11 +93,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             </span>
           </div>
 
-          {/* Dev Quick Action & Language */}
+          {/* Dev Quick Action, Install App & Language */}
           <div className="flex items-center gap-2">
+            {onOpenInstallModal && (
+              <button
+                onClick={onOpenInstallModal}
+                className="flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-300 border border-emerald-500/40 transition-all font-bold text-[11px] cursor-pointer animate-pulse"
+                title={isArabic ? 'تثبيت التطبيق على جهازك' : 'Install PIPO App'}
+              >
+                <ArrowDownToLine className="w-3 h-3 text-emerald-400" />
+                <span>{isArabic ? '📲 تثبيت التطبيق' : '📲 Install App'}</span>
+              </button>
+            )}
+
             <button
               onClick={() => setActiveTab('dev-console')}
-              className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition-all font-bold text-[11px]"
+              className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition-all font-bold text-[11px] cursor-pointer"
               title={isArabic ? 'لوحة تحكم المطور' : 'Developer Super-Console'}
             >
               <Terminal className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
@@ -104,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setIsArabic(!isArabic)}
-              className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 transition-all font-mono text-[11px]"
+              className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 transition-all font-mono text-[11px] cursor-pointer"
             >
               <Globe className="w-3 h-3 text-amber-400" />
               <span>{isArabic ? 'English' : 'عربي'}</span>

@@ -97,4 +97,63 @@ export interface DownloadHistoryItem {
   noWatermark: boolean;
 }
 
+export interface BroadcastState {
+  enabled: boolean;
+  message: string;
+  type: 'live' | 'radio' | 'breaking' | 'announcement' | 'promo';
+  audioStreamUrl?: string;
+  radioStationName?: string;
+  isRadioPlaying: boolean;
+  marqueeSpeed: number;
+  allowDismiss: boolean;
+  createdAt: string;
+}
+
+export interface BroadcastNotification {
+  id: string;
+  title: string;
+  message: string;
+  type: 'live' | 'radio' | 'breaking' | 'announcement' | 'promo' | 'system';
+  createdAt: string;
+  actionUrl?: string;
+  actionLabel?: string;
+  priority?: 'high' | 'normal' | 'urgent';
+  sound?: boolean;
+}
+
+export interface VisitorLogItem {
+  id: string;
+  ip: string;
+  deviceName: string;
+  deviceType: 'mobile' | 'desktop' | 'tablet' | 'bot';
+  os: string;
+  browser: string;
+  country: string;
+  countryCode: string;
+  countryFlag: string;
+  city: string;
+  isp?: string;
+  screenResolution: string;
+  language: string;
+  timeZone: string;
+  firstSeen: string;
+  lastSeen: string;
+  activeTab: string;
+  isOnline: boolean;
+  pageViews: number;
+  referrer?: string;
+}
+
+export interface VisitorStatsSummary {
+  activeOnlineCount: number;
+  totalVisitsCount: number;
+  uniqueVisitorsCount: number;
+  mobilePercentage: number;
+  desktopPercentage: number;
+  tabletPercentage: number;
+  topCountries: { country: string; flag: string; count: number }[];
+  topDevices: { name: string; count: number }[];
+}
+
 export type MainAppTab = 'downloader' | 'enhancer' | 'batch' | 'audio-extractor' | 'history' | 'ai-assistant' | 'dev-console';
+

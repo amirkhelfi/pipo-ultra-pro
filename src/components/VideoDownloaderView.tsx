@@ -52,8 +52,8 @@ export const VideoDownloaderView: React.FC<VideoDownloaderViewProps> = ({
       if (targetUrl) {
         setUrlInput(targetUrl);
       }
-    } catch (err) {
-      setErrorMessage(isArabic ? 'تعذر استخراج بيانات هذا الرابط. تأكد من صحة الرابط وحاول ثانية.' : 'Failed to extract video details. Check the URL and try again.');
+    } catch (err: any) {
+      setErrorMessage(err?.message || (isArabic ? 'تعذر استخراج بيانات هذا الرابط. تأكد من صحة الرابط وحاول ثانية.' : 'Failed to extract video details. Check the URL and try again.'));
     } finally {
       setIsLoading(false);
     }
