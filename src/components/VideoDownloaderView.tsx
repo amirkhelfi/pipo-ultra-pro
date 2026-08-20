@@ -377,6 +377,38 @@ export const VideoDownloaderView: React.FC<VideoDownloaderViewProps> = ({
                 </h4>
 
                 <div className="grid grid-cols-1 gap-2.5">
+                  {/* Dedicated AI 4K Upscale & Enhance Option Card */}
+                  <div className="p-3.5 rounded-2xl border bg-gradient-to-r from-cyan-950/70 via-blue-950/60 to-slate-900 border-cyan-500/50 shadow-lg shadow-cyan-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-cyan-500/20 text-cyan-300 font-bold text-xs border border-cyan-500/40 animate-pulse">
+                        <Sparkles className="w-4 h-4 text-cyan-300" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-black text-white">{isArabic ? 'تحسين جودة هذا الفيديو بالذكاء الاصطناعي 4K' : 'AI 4K 60FPS Video Enhancer'}</span>
+                          <span className="px-1.5 py-0.2 rounded bg-cyan-400 text-black text-[9px] font-black">
+                            AI PRO ✨
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-cyan-200/80 flex items-center gap-2 pt-0.5 font-mono">
+                          <span>4K UHD 60FPS</span>
+                          <span>•</span>
+                          <span>{isArabic ? 'ترميم تفاصيل + HDR' : 'Face Restore & HDR'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 sm:self-center">
+                      <button
+                        onClick={() => onSendToEnhancer(videoInfo.previewVideoUrl || (videoInfo.options?.[0]?.url) || '', videoInfo.title)}
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-md bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-black shadow-cyan-500/20 active:scale-95"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 fill-current" />
+                        <span>{isArabic ? 'تحسين الآن' : 'Enhance Now'}</span>
+                      </button>
+                    </div>
+                  </div>
+
                   {videoInfo.options.map((opt) => (
                     <div
                       key={opt.id}

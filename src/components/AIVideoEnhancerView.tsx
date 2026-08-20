@@ -29,6 +29,18 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
   );
   const [settings, setSettings] = useState<AIEnhancementSettings>(DEFAULT_AI_SETTINGS);
   
+  // Update state whenever initialVideoUrl or initialTitle changes (e.g. sent from Video Downloader)
+  useEffect(() => {
+    if (initialVideoUrl) {
+      setVideoUrl(initialVideoUrl);
+      setIsEnhancedReady(false);
+      setProgress(0);
+    }
+    if (initialTitle) {
+      setVideoTitle(initialTitle);
+    }
+  }, [initialVideoUrl, initialTitle]);
+
   // Enhancement Process state
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
@@ -169,7 +181,7 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
           setIsPlaying(true);
         }, 400);
       }
-    }, 700);
+    }, 600);
   };
 
   // Handle Download Enhanced Video
@@ -205,7 +217,7 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
   const enhancedFilterStyle: React.CSSProperties = {
     filter: `
       contrast(${100 + settings.contrast + 15}%)
-      brightness(${100 + settings.brightness + 3}%)
+      brightness(${100 + settings.brightness + 4}%)
       saturate(${100 + (settings.colorVibrance * 0.4)}%)
     `,
   };
@@ -218,15 +230,15 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1.5 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{isArabic ? 'محرك PIPO Super-Resolution AI للذكاء الاصطناعي' : 'PIPO Neural Super-Resolution Engine'}</span>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{isArabic ? 'استوديو الذكاء الاصطناعي الفائق v4.0' : 'Neural AI Video Super-Resolution Studio'}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white">
-              {isArabic ? 'تحسين ورفع جودة الفيديو إلى 4K Ultra HD' : 'AI Video Quality Enhancer & 4K Upscaler'}
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              {isArabic ? 'تحسين جودة الفيديو ورفع الدقة إلى 4K 60FPS' : 'AI Video Quality Enhancer & 4K 60FPS'}
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               {isArabic 
-                ? 'ارفع دقة أي فيديو ضعيف الجودة أو مشوش إلى 4K/60FPS، تخلص من بكسلة الواتساب والتيك توك، وعزز الألوان السينمائية بضغطة واحدة.'
+                ? 'رفع دقة الفيديو المشوش أو منخفض الجودة إلى 4K فائق الوضوح، ترميم ملامح الوجه، إزالة الضوضاء البصرية، ومضاعفة معدل الإطارات إلى 60 FPS.' 
                 : 'Upscale low-res, noisy or compressed videos to crystal-clear 4K 60FPS with neural detail synthesis.'}
             </p>
           </div>
@@ -311,10 +323,10 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
                   loop
                   muted={isMuted}
                   onTimeUpdate={handleTimeUpdate}
-                  className="w-full h-full object-cover filter blur-[0.6px] brightness-90"
+                  className="w-full h-full object-cover filter blur-[0.5px] brightness-90"
                 />
                 <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-[10px] font-bold text-slate-300 border border-white/10">
-                  {isArabic ? 'قبل: أصلي (480p/720p مشوش)' : 'BEFORE: Original (Low-Res)'}
+                  {isArabic ? 'قبل: أصلي (جودة منخفضة)' : 'BEFORE: Original (Low-Res)'}
                 </div>
               </div>
 
@@ -417,145 +429,99 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3 rounded-2xl bg-slate-900/60 border border-white/5 text-center">
               <span className="text-[10px] text-slate-400 block">{isArabic ? 'الدقة المستهدفة' : 'Target Resolution'}</span>
-              <span className="text-sm font-black text-cyan-400 font-mono">{settings.upscaleFactor.toUpperCase()} UHD (3840x2160)</span>
+              <span className="text-sm font-black text-cyan-400 font-mono">{settings.upscaleFactor.toUpperCase()} UHD</span>
             </div>
             <div className="p-3 rounded-2xl bg-slate-900/60 border border-white/5 text-center">
-              <span className="text-[10px] text-slate-400 block">{isArabic ? 'معدل الإطارات' : 'Frame Rate'}</span>
-              <span className="text-sm font-black text-amber-400 font-mono">{settings.targetFps} FPS Ultra Smooth</span>
+              <span className="text-[10px] text-slate-400 block">{isArabic ? 'سلاسة الحركة' : 'Motion Rate'}</span>
+              <span className="text-sm font-black text-amber-400 font-mono">{settings.targetFps} FPS Cinema</span>
             </div>
             <div className="p-3 rounded-2xl bg-slate-900/60 border border-white/5 text-center">
-              <span className="text-[10px] text-slate-400 block">{isArabic ? 'نسبة الوضوح' : 'Clarity Boost'}</span>
-              <span className="text-sm font-black text-emerald-400 font-mono">+{settings.sharpening * 3}% Detail</span>
+              <span className="text-[10px] text-slate-400 block">{isArabic ? 'ترميم الملامح' : 'Face Restore'}</span>
+              <span className="text-sm font-black text-emerald-400 font-mono">{settings.faceEnhance ? 'ON' : 'OFF'}</span>
             </div>
             <div className="p-3 rounded-2xl bg-slate-900/60 border border-white/5 text-center">
-              <span className="text-[10px] text-slate-400 block">{isArabic ? 'معالجة الألوان' : 'HDR Grading'}</span>
-              <span className="text-sm font-black text-purple-400 font-mono">10-Bit Dynamic</span>
-            </div>
-          </div>
-
-          {/* Sample Video Clips for Fast Test */}
-          <div className="p-4 rounded-2xl bg-slate-900/40 border border-white/5 space-y-2">
-            <span className="text-xs font-bold text-slate-300 block">
-              {isArabic ? 'أو اختر فيديو تجريبي لاختبار محرك الذكاء الاصطناعي:' : 'Or try sample clips to test AI engine:'}
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              {SAMPLE_ENHANCE_VIDEOS.map((sample) => (
-                <button
-                  key={sample.id}
-                  onClick={() => {
-                    setVideoUrl(sample.url);
-                    setVideoTitle(sample.title);
-                    setIsEnhancedReady(false);
-                    setProgress(0);
-                  }}
-                  className={`p-2.5 rounded-xl border text-right sm:text-center transition-all flex sm:flex-col items-center gap-2 ${
-                    videoUrl === sample.url
-                      ? 'bg-cyan-500/20 border-cyan-500 text-white'
-                      : 'bg-slate-950/60 border-white/5 text-slate-300 hover:border-white/20'
-                  }`}
-                >
-                  <img src={sample.thumbnail} alt={sample.title} className="w-12 h-8 sm:w-full sm:h-16 rounded-lg object-cover" />
-                  <div className="min-w-0">
-                    <span className="text-[11px] font-bold block truncate">{sample.title}</span>
-                    <span className="text-[9px] text-slate-400 block">{sample.originalResolution}</span>
-                  </div>
-                </button>
-              ))}
+              <span className="text-[10px] text-slate-400 block">{isArabic ? 'نظام الألوان' : 'Color Dynamic'}</span>
+              <span className="text-sm font-black text-purple-400 font-mono">HDR 10-Bit</span>
             </div>
           </div>
 
         </div>
 
-        {/* Right Column: AI Enhancement Controls & Model Suite */}
+        {/* Right Column: AI Model Settings & Trigger Controls */}
         <div className="lg:col-span-4 space-y-4">
           
-          <div className="rounded-3xl bg-slate-900/90 border border-cyan-500/30 p-5 shadow-2xl space-y-5">
-            
+          <div className="rounded-3xl bg-slate-900/80 border border-cyan-500/30 p-5 shadow-2xl space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-white/10">
-              <div className="flex items-center gap-2">
-                <Sliders className="w-5 h-5 text-cyan-400" />
-                <h3 className="text-sm font-black text-white">
-                  {isArabic ? 'إعدادات ومحركات الذكاء الاصطناعي' : 'AI Engine & Tuning Suite'}
-                </h3>
-              </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                PRO 4K
-              </span>
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-cyan-400" />
+                <span>{isArabic ? 'إعدادات معالجة الذكاء الاصطناعي' : 'AI Processing Settings'}</span>
+              </h3>
             </div>
 
-            {/* Model Selection */}
+            {/* Model Selector */}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-300 block">
-                {isArabic ? '1. اختر نموذج الذكاء الاصطناعي (AI Model):' : '1. Select AI Neural Model:'}
+              <label className="text-xs font-semibold text-slate-300 block">
+                {isArabic ? 'محرك الذكاء الاصطناعي' : 'Neural AI Model'}
               </label>
-              
-              <div className="space-y-2">
-                {AI_MODELS_INFO.map((m) => {
-                  const isSelected = settings.model === m.id;
-                  return (
-                    <div
-                      key={m.id}
-                      onClick={() => setSettings(prev => ({ ...prev, model: m.id as any }))}
-                      className={`p-3 rounded-2xl border cursor-pointer transition-all ${
-                        isSelected
-                          ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-cyan-500/60 shadow-md'
-                          : 'bg-slate-950/60 border-white/5 hover:border-white/20'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                          {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400" />}
-                          <span>{m.name}</span>
-                        </span>
-                        <span className="text-[9px] font-bold text-cyan-300 bg-cyan-500/10 px-1.5 py-0.5 rounded">
-                          {m.badge}
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-slate-400 mt-1 leading-relaxed">{m.description}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Target Resolution */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-300 block">
-                {isArabic ? '2. الدقة المطلوبة (Upscale Target):' : '2. Output Resolution Target:'}
-              </label>
-              <div className="grid grid-cols-4 gap-1.5">
-                {(['1080p', '2k', '4k', '8k'] as const).map((res) => (
+              <div className="grid grid-cols-1 gap-2">
+                {AI_MODELS_INFO.map((model) => (
                   <button
-                    key={res}
-                    type="button"
-                    onClick={() => setSettings(prev => ({ ...prev, upscaleFactor: res }))}
-                    className={`py-2 rounded-xl text-xs font-black transition-all ${
-                      settings.upscaleFactor === res
-                        ? 'bg-cyan-500 text-black shadow-lg shadow-cyan-500/30'
-                        : 'bg-slate-950 text-slate-400 border border-white/10 hover:text-white'
+                    key={model.id}
+                    onClick={() => setSettings(prev => ({ ...prev, model: model.id as any }))}
+                    className={`p-3 rounded-xl border text-right transition-all flex items-start justify-between ${
+                      settings.model === model.id
+                        ? 'bg-cyan-500/10 border-cyan-400 text-white'
+                        : 'bg-black/40 border-white/5 text-slate-400 hover:border-white/20'
                     }`}
                   >
-                    {res.toUpperCase()}
+                    <div>
+                      <div className="text-xs font-bold text-white">{model.name}</div>
+                      <div className="text-[10px] text-slate-400 mt-0.5">{model.description}</div>
+                    </div>
+                    {settings.model === model.id && (
+                      <CheckCircle2 className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                    )}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Target FPS Frame Interpolation */}
+            {/* Upscale Target Selection */}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-300 block">
-                {isArabic ? '3. سلاسة الحركة (Frame Rate Interpolation):' : '3. Frame Interpolation (FPS):'}
+              <label className="text-xs font-semibold text-slate-300 block">
+                {isArabic ? 'مستوى رفع الدقة (Upscale Factor)' : 'Upscale Factor'}
               </label>
               <div className="grid grid-cols-3 gap-2">
-                {(['30', '60', '120'] as const).map((fps) => (
+                {(['2k', '4k', '8k'] as const).map((factor) => (
+                  <button
+                    key={factor}
+                    onClick={() => setSettings(prev => ({ ...prev, upscaleFactor: factor }))}
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
+                      settings.upscaleFactor === factor
+                        ? 'bg-cyan-500 text-black border-cyan-400 shadow-md shadow-cyan-500/20'
+                        : 'bg-slate-950 text-slate-300 border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    {factor.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Target FPS Selection */}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-slate-300 block">
+                {isArabic ? 'معدل الإطارات (Smooth FPS)' : 'Target Framerate'}
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {([30, 60, 120] as const).map((fps) => (
                   <button
                     key={fps}
-                    type="button"
                     onClick={() => setSettings(prev => ({ ...prev, targetFps: fps }))}
-                    className={`py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
                       settings.targetFps === fps
-                        ? 'bg-amber-500 text-black font-extrabold'
-                        : 'bg-slate-950 text-slate-400 border border-white/10'
+                        ? 'bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20'
+                        : 'bg-slate-950 text-slate-300 border-white/10 hover:border-white/20'
                     }`}
                   >
                     {fps} FPS
@@ -564,13 +530,11 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
               </div>
             </div>
 
-            {/* Tuning Sliders */}
-            <div className="space-y-3 pt-2 border-t border-white/10">
-              
-              {/* Sharpening */}
+            {/* Fine Tuning Sliders */}
+            <div className="space-y-3 pt-2 border-t border-white/5">
               <div className="space-y-1">
                 <div className="flex justify-between text-xs text-slate-300">
-                  <span>{isArabic ? 'حدة التفاصيل (AI Sharpening)' : 'AI Sharpening'}</span>
+                  <span>{isArabic ? 'حدة التفاصيل (Sharpening)' : 'Sharpness'}</span>
                   <span className="font-mono text-cyan-400">{settings.sharpening}%</span>
                 </div>
                 <input
@@ -579,30 +543,13 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
                   max={100}
                   value={settings.sharpening}
                   onChange={(e) => setSettings(prev => ({ ...prev, sharpening: parseInt(e.target.value) }))}
-                  className="w-full accent-cyan-400 h-1.5 bg-slate-950 rounded-lg cursor-pointer"
+                  className="w-full accent-cyan-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
                 />
               </div>
 
-              {/* Denoising */}
               <div className="space-y-1">
                 <div className="flex justify-between text-xs text-slate-300">
-                  <span>{isArabic ? 'إزالة التشويش (AI Denoising)' : 'AI Denoise Level'}</span>
-                  <span className="font-mono text-cyan-400">{settings.denoising}%</span>
-                </div>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={settings.denoising}
-                  onChange={(e) => setSettings(prev => ({ ...prev, denoising: parseInt(e.target.value) }))}
-                  className="w-full accent-cyan-400 h-1.5 bg-slate-950 rounded-lg cursor-pointer"
-                />
-              </div>
-
-              {/* HDR Vibrance */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-xs text-slate-300">
-                  <span>{isArabic ? 'تشبع وألوان HDR (Color Vibrance)' : 'HDR Vibrance'}</span>
+                  <span>{isArabic ? 'تشبع الألوان السينمائي (HDR Vibrance)' : 'HDR Vibrance'}</span>
                   <span className="font-mono text-amber-400">{settings.colorVibrance}%</span>
                 </div>
                 <input
@@ -611,87 +558,56 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
                   max={100}
                   value={settings.colorVibrance}
                   onChange={(e) => setSettings(prev => ({ ...prev, colorVibrance: parseInt(e.target.value) }))}
-                  className="w-full accent-amber-400 h-1.5 bg-slate-950 rounded-lg cursor-pointer"
+                  className="w-full accent-amber-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
                 />
               </div>
-
             </div>
 
-            {/* Smart Feature Toggles */}
-            <div className="space-y-2 pt-2 border-t border-white/10">
-              <label className="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-white/5 cursor-pointer">
-                <span className="text-xs text-slate-300 font-medium flex items-center gap-1.5">
-                  <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
-                  {isArabic ? 'ترميم ملامح الوجه (AI Face Detailer)' : 'AI Face Restoration'}
-                </span>
-                <input
-                  type="checkbox"
-                  checked={settings.faceRestoration}
-                  onChange={(e) => setSettings(prev => ({ ...prev, faceRestoration: e.target.checked }))}
-                  className="accent-cyan-400 w-4 h-4 rounded cursor-pointer"
-                />
-              </label>
-
-              <label className="flex items-center justify-between p-2 rounded-xl bg-slate-950/60 border border-white/5 cursor-pointer">
-                <span className="text-xs text-slate-300 font-medium flex items-center gap-1.5">
-                  <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-                  {isArabic ? 'عزل ضوضاء الصوت (Vocal Noise Cleaner)' : 'AI Audio Denoise'}
-                </span>
-                <input
-                  type="checkbox"
-                  checked={settings.audioDenoise}
-                  onChange={(e) => setSettings(prev => ({ ...prev, audioDenoise: e.target.checked }))}
-                  className="accent-emerald-400 w-4 h-4 rounded cursor-pointer"
-                />
-              </label>
-            </div>
-
-            {/* Action Trigger Buttons */}
-            <div className="pt-2 space-y-2.5">
+            {/* Action Button: Run or Download */}
+            <div className="pt-2 space-y-2">
               {!isEnhancedReady ? (
                 <button
                   onClick={startEnhancement}
                   disabled={isProcessing}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500 hover:from-cyan-400 hover:to-blue-400 text-black font-black text-sm shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-500 to-amber-500 hover:from-cyan-400 hover:to-amber-400 text-black font-black text-sm shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <>
-                      <RefreshCw className="w-4 h-4 animate-spin text-black" />
-                      <span>{isArabic ? 'جاري المعالجة بالذكاء الاصطناعي...' : 'Enhancing with AI...'}</span>
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                      <span>{isArabic ? 'جارٍ معالجة الفيديو بالذكاء الاصطناعي...' : 'Enhancing with AI Neural Net...'}</span>
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4 text-black stroke-[2.5]" />
-                      <span>{isArabic ? 'بدء تحسين الفيديو الآن' : 'Start AI Enhancement'}</span>
+                      <Sparkles className="w-5 h-5 stroke-[2.5]" />
+                      <span>{isArabic ? 'بدء تحسين جودة الفيديو 4K' : 'Start 4K AI Enhancement'}</span>
                     </>
                   )}
                 </button>
               ) : (
                 <button
                   onClick={handleDownloadEnhanced}
-                  className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-black font-black text-sm shadow-xl shadow-amber-500/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95 animate-pulse"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-300 hover:to-teal-400 text-black font-black text-sm shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95"
                 >
-                  <Download className="w-4 h-4 text-black stroke-[2.5]" />
-                  <span>{isArabic ? `تنزيل الفيديو المحسن (${settings.upscaleFactor.toUpperCase()} 60FPS)` : `Download Enhanced ${settings.upscaleFactor.toUpperCase()}`}</span>
+                  <Download className="w-5 h-5 stroke-[2.5]" />
+                  <span>{isArabic ? 'تنزيل الفيديو المحسن بجودة 4K' : 'Download 4K Enhanced Video'}</span>
                 </button>
               )}
-            </div>
 
-            {/* Processing Progress Status */}
-            {isProcessing && (
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-cyan-500/30 space-y-2 animate-fade-in">
-                <div className="flex justify-between text-xs">
-                  <span className="text-cyan-300 font-bold">{processStage}</span>
-                  <span className="font-mono text-white">{progress}%</span>
+              {/* Progress Feedback */}
+              {isProcessing && (
+                <div className="space-y-2 pt-2 animate-fade-in">
+                  <div className="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden p-0.5 border border-white/10">
+                    <div 
+                      className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-amber-400 transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-cyan-300 font-mono text-center">
+                    {processStage} ({progress}%)
+                  </p>
                 </div>
-                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-            )}
+              )}
+            </div>
 
           </div>
 
