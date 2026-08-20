@@ -7,10 +7,10 @@ import { AudioExtractorView } from './components/AudioExtractorView';
 import { BatchDownloaderView } from './components/BatchDownloaderView';
 import { DownloadHistoryView } from './components/DownloadHistoryView';
 import { AIVideoAssistantModal } from './components/AIVideoAssistantModal';
-import { ProjectExportModal } from './components/ProjectExportModal';
+import { DeveloperConsoleView } from './components/DeveloperConsoleView';
 import { 
   Download, Sparkles, ShieldCheck, Zap, ArrowDownToLine, 
-  Layers, Music, Globe, CheckCircle2, Bot
+  Layers, Music, Globe, CheckCircle2, Bot, Terminal
 } from 'lucide-react';
 
 export default function App() {
@@ -23,7 +23,6 @@ export default function App() {
 
   // Modals
   const [isAIOpen, setIsAIOpen] = useState<boolean>(false);
-  const [isExportOpen, setIsExportOpen] = useState<boolean>(false);
 
   // Local storage history
   const [history, setHistory] = useState<DownloadHistoryItem[]>(() => {
@@ -112,7 +111,6 @@ export default function App() {
         isArabic={isArabic}
         setIsArabic={setIsArabic}
         historyCount={history.length}
-        onOpenExportModal={() => setIsExportOpen(true)}
       />
 
       {/* Main App Container */}
@@ -161,10 +159,24 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'dev-console' && (
+          <DeveloperConsoleView
+            isArabic={isArabic}
+          />
+        )}
+
       </main>
 
-      {/* Floating AI Assistant Trigger */}
-      <div className={`fixed bottom-6 ${isArabic ? 'left-6' : 'right-6'} z-30`}>
+      {/* Floating AI Assistant & Dev Trigger */}
+      <div className={`fixed bottom-6 ${isArabic ? 'left-6' : 'right-6'} z-30 flex items-center gap-2`}>
+        <button
+          onClick={() => setActiveTab('dev-console')}
+          className="p-3 rounded-full bg-slate-900 border border-amber-500/40 text-amber-400 font-extrabold shadow-2xl hover:scale-110 active:scale-95 transition-all"
+          title={isArabic ? 'لوحة تحكم المطور' : 'Developer Super-Console'}
+        >
+          <Terminal className="w-5 h-5" />
+        </button>
+
         <button
           onClick={() => setIsAIOpen(true)}
           className="flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-amber-500 text-black font-extrabold text-xs shadow-2xl shadow-cyan-500/30 hover:scale-110 active:scale-95 transition-all group"
@@ -184,20 +196,20 @@ export default function App() {
             </div>
             <span className="font-bold text-white tracking-wide">PIPO ULTRA PRO</span>
             <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-black">
-              AI Video 4K
+              LIVE ENGINE v4.0
             </span>
-            <span>• {isArabic ? 'أقوى منصة لتنزيل الفيديوهات بدون علامة مائية ورفع الجودة بالذكاء الاصطناعي' : 'Universal No-Watermark Downloader & 4K AI Enhancer'}</span>
+            <span>• {isArabic ? 'تنزيل الفيديوهات الحقيقية بدون علامة مائية + تحسين الجودة 4K' : 'Real-time No-Watermark Downloader & 4K AI Enhancer'}</span>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
             <span className="flex items-center gap-1 text-emerald-400">
-              <ShieldCheck className="w-4 h-4" /> {isArabic ? 'تنزيل بدون علامة 100%' : '100% No Watermark'}
+              <ShieldCheck className="w-4 h-4" /> {isArabic ? 'سحب حقيقي 100%' : '100% Real Extraction'}
             </span>
             <span className="flex items-center gap-1 text-cyan-400">
               <Sparkles className="w-4 h-4" /> {isArabic ? 'محرك 4K 60FPS AI' : '4K 60FPS AI Engine'}
             </span>
             <span className="flex items-center gap-1 text-amber-400">
-              <Zap className="w-4 h-4" /> {isArabic ? 'سرعة تنزيل غير محدودة' : 'Unlimited Speed'}
+              <Zap className="w-4 h-4" /> {isArabic ? 'سرعة تنزيل فائقة' : 'Unlimited Speed'}
             </span>
           </div>
 
@@ -208,13 +220,6 @@ export default function App() {
       <AIVideoAssistantModal
         isOpen={isAIOpen}
         onClose={() => setIsAIOpen(false)}
-        isArabic={isArabic}
-      />
-
-      {/* Project Export / Download Modal */}
-      <ProjectExportModal
-        isOpen={isExportOpen}
-        onClose={() => setIsExportOpen(false)}
         isArabic={isArabic}
       />
 

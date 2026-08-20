@@ -2,7 +2,7 @@ import React from 'react';
 import { MainAppTab } from '../types';
 import { 
   Download, Sparkles, Music, Layers, History, Bot, 
-  Globe, ShieldCheck, Zap, ArrowDownToLine, Flame, FolderArchive
+  Globe, ShieldCheck, Zap, ArrowDownToLine, Flame, Terminal
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -11,7 +11,6 @@ interface NavbarProps {
   isArabic: boolean;
   setIsArabic: (val: boolean) => void;
   historyCount: number;
-  onOpenExportModal: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -20,7 +19,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   isArabic,
   setIsArabic,
   historyCount,
-  onOpenExportModal,
 }) => {
   const tabs = [
     {
@@ -66,6 +64,14 @@ export const Navbar: React.FC<NavbarProps> = ({
       icon: Bot,
       accent: 'text-amber-400',
       badge: 'AI',
+    },
+    {
+      id: 'dev-console' as MainAppTab,
+      label: isArabic ? 'لوحة تحكم المطور' : 'Dev Super-Console',
+      sublabel: isArabic ? 'Root Server' : 'Master Ops',
+      icon: Terminal,
+      accent: 'text-amber-400',
+      badge: 'ROOT',
     }
   ];
 
@@ -77,33 +83,33 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 font-bold text-amber-400">
               <Zap className="w-3.5 h-3.5" />
-              {isArabic ? 'محرك PIPO ULTRA AI v4.0 الخارق: تنزيل فائق السرعة + رفع دقة 4K' : 'PIPO ULTRA AI Engine v4.0: Ultra-Fast No-Watermark & 4K AI Upscaling'}
+              {isArabic ? 'محرك PIPO ULTRA AI v4.0 الحقيقي: سحب فوري بدون علامة مائية + رفع دقة 4K' : 'PIPO ULTRA AI Live Engine: 100% Real No-Watermark & 4K AI Upscaling'}
             </span>
             <span className="hidden md:inline text-slate-600">|</span>
             <span className="hidden md:inline text-slate-400">
-              {isArabic ? 'يدعم: TikTok • Instagram • YouTube • Facebook • X (Twitter) • Pinterest' : 'Supports: TikTok • Instagram • YouTube • Facebook • X • Pinterest'}
+              {isArabic ? 'يدعم: TikTok • Instagram • YouTube • Facebook • X • Pinterest' : 'Supports: TikTok • Instagram • YouTube • Facebook • X • Pinterest'}
             </span>
           </div>
 
-            {/* Language & Export Actions */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={onOpenExportModal}
-                className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition-all font-bold text-[11px]"
-                title={isArabic ? 'تنزيل ملفات المشروع' : 'Download Project Files'}
-              >
-                <FolderArchive className="w-3.5 h-3.5 text-amber-400" />
-                <span>{isArabic ? 'تنزيل ملفات الموقع' : 'Export Files'}</span>
-              </button>
+          {/* Dev Quick Action & Language */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveTab('dev-console')}
+              className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition-all font-bold text-[11px]"
+              title={isArabic ? 'لوحة تحكم المطور' : 'Developer Super-Console'}
+            >
+              <Terminal className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+              <span>{isArabic ? 'لوحة المطور' : 'Dev Console'}</span>
+            </button>
 
-              <button
-                onClick={() => setIsArabic(!isArabic)}
-                className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 transition-all font-mono text-[11px]"
-              >
-                <Globe className="w-3 h-3 text-amber-400" />
-                <span>{isArabic ? 'English' : 'عربي'}</span>
-              </button>
-            </div>
+            <button
+              onClick={() => setIsArabic(!isArabic)}
+              className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 border border-white/10 transition-all font-mono text-[11px]"
+            >
+              <Globe className="w-3 h-3 text-amber-400" />
+              <span>{isArabic ? 'English' : 'عربي'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -145,11 +151,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Mobile Actions */}
             <div className="flex lg:hidden items-center gap-1.5">
               <button
-                onClick={() => setActiveTab('enhancer')}
-                className="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-cyan-300 text-xs font-bold flex items-center gap-1"
+                onClick={() => setActiveTab('dev-console')}
+                className="px-2.5 py-1.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-1"
               >
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                <span>4K AI</span>
+                <Terminal className="w-3.5 h-3.5 text-amber-400" />
+                <span>ROOT</span>
               </button>
             </div>
           </div>

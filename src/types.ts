@@ -97,4 +97,4 @@ export interface DownloadHistoryItem {
   noWatermark: boolean;
 }
 
-export type MainAppTab = 'downloader' | 'enhancer' | 'batch' | 'audio-extractor' | 'history' | 'ai-assistant';
+export type MainAppTab = 'downloader' | 'enhancer' | 'batch' | 'audio-extractor' | 'history' | 'ai-assistant' | 'dev-console';
