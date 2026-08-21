@@ -2,6 +2,10 @@
 const CACHE_NAME = 'pipo-ultra-v5.0-network-first';
 
 self.addEventListener('install', (event) => {
+<<<<<<< HEAD
+=======
+  // Immediately activate new service worker without waiting
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51
   self.skipWaiting();
 });
 
@@ -29,6 +33,10 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Network-First for HTML navigations and JavaScript/CSS assets
+<<<<<<< HEAD
+=======
+  // This guarantees users ALWAYS get the latest build and never get a white screen from stale HTML
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
@@ -41,6 +49,10 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(async () => {
+<<<<<<< HEAD
+=======
+        // Fallback to cache ONLY if network is completely offline
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51
         const cached = await caches.match(event.request);
         if (cached) {
           return cached;
@@ -53,3 +65,4 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+

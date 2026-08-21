@@ -20,6 +20,10 @@
     <!-- Self-Healing & Stale Cache/ServiceWorker Recovery Script -->
     <script>
       (function() {
+<<<<<<< HEAD
+=======
+        // Intercept module/script loading errors (ChunkLoadError / Failed to fetch dynamically imported module)
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51
         window.addEventListener('error', function(e) {
           var isModuleOrChunkError = e.message && (
             e.message.indexOf('dynamically imported module') !== -1 ||

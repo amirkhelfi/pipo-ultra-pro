@@ -10,6 +10,10 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/sw.js')
       .then((reg) => {
+<<<<<<< HEAD
+=======
+        // Check for updates
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51
         reg.addEventListener('updatefound', () => {
           const newWorker = reg.installing;
           if (newWorker) {
@@ -34,3 +38,8 @@ createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </StrictMode>,
 );
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51

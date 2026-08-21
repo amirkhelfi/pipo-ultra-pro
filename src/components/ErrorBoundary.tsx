@@ -29,9 +29,17 @@ export class ErrorBoundary extends Component<Props, State> {
   public handleHardReset = async (): Promise<void> => {
     this.setState({ isClearing: true });
     try {
+<<<<<<< HEAD
       localStorage.clear();
       sessionStorage.clear();
 
+=======
+      // 1. Clear LocalStorage and SessionStorage
+      localStorage.clear();
+      sessionStorage.clear();
+
+      // 2. Unregister all service workers
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
         for (const registration of registrations) {
@@ -39,11 +47,19 @@ export class ErrorBoundary extends Component<Props, State> {
         }
       }
 
+<<<<<<< HEAD
+=======
+      // 3. Delete CacheStorage caches
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51
       if ('caches' in window) {
         const keys = await caches.keys();
         await Promise.all(keys.map(k => caches.delete(k)));
       }
 
+<<<<<<< HEAD
+=======
+      // 4. Force reload without cache
+>>>>>>> e86ab3b8f4485c7cb4e74604d156c9bf1e466e51
       window.location.href = window.location.origin + '?cache_bust=' + Date.now();
     } catch (e) {
       window.location.reload();

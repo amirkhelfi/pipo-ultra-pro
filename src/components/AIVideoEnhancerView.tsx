@@ -457,7 +457,7 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
             </div>
             <div className="p-3 rounded-2xl bg-slate-900/60 border border-white/5 text-center">
               <span className="text-[10px] text-slate-400 block">{isArabic ? 'ترميم الملامح' : 'Face Restore'}</span>
-              <span className="text-sm font-black text-emerald-400 font-mono">{settings.faceEnhance ? 'ON' : 'OFF'}</span>
+              <span className="text-sm font-black text-emerald-400 font-mono">{settings.faceRestoration ? 'ON' : 'OFF'}</span>
             </div>
             <div className="p-3 rounded-2xl bg-slate-900/60 border border-white/5 text-center">
               <span className="text-[10px] text-slate-400 block">{isArabic ? 'نظام الألوان' : 'Color Dynamic'}</span>
@@ -534,7 +534,7 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
                 {isArabic ? 'معدل الإطارات (Smooth FPS)' : 'Target Framerate'}
               </label>
               <div className="grid grid-cols-3 gap-2">
-                {([30, 60, 120] as const).map((fps) => (
+                {(['30', '60', '120'] as const).map((fps) => (
                   <button
                     key={fps}
                     onClick={() => setSettings(prev => ({ ...prev, targetFps: fps }))}
