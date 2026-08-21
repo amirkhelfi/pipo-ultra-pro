@@ -1,23 +1,8 @@
-// PIPO ULTRA PRO Service Worker for PWA Installation and Background Caching
-const CACHE_NAME = 'pipo-ultra-v4.3';
-const OFFLINE_URL = '/';
-
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icon-192.svg',
-  '/icon-512.svg'
-];
+// PIPO ULTRA PRO Service Worker - Network-First Strategy with Self-Healing
+const CACHE_NAME = 'pipo-ultra-v5.0-network-first';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS).catch((err) => {
-        console.warn('SW cache addAll fallback:', err);
-      });
-    })
-  );
+  // Immediately activate new service worker without waiting
   self.skipWaiting();
 });
 
@@ -27,31 +12,48 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('[SW] Clearing stale cache:', key);
             return caches.delete(key);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pass-through API calls and dynamic video streams directly to network
-  if (event.request.url.includes('/api/')) {
+  const url = new URL(event.request.url);
+
+  // Bypass all API requests, video streaming, proxies, and websocket connections
+  if (url.pathname.startsWith('/api/') || url.hostname !== self.location.hostname) {
     return;
   }
 
+  // Network-First for HTML navigations and JavaScript/CSS assets
+  // This guarantees users ALWAYS get the latest build and never get a white screen from stale HTML
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => {
-        if (event.request.mode === 'navigate') {
-          return caches.match(OFFLINE_URL);
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          }).catch(() => {});
         }
-      });
-    })
+        return networkResponse;
+      })
+      .catch(async () => {
+        // Fallback to cache ONLY if network is completely offline
+        const cached = await caches.match(event.request);
+        if (cached) {
+          return cached;
+        }
+        if (event.request.mode === 'navigate') {
+          const fallback = await caches.match('/');
+          if (fallback) return fallback;
+        }
+        return new Response('Network offline', { status: 503, statusText: 'Service Unavailable' });
+      })
   );
 });
+

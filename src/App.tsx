@@ -73,8 +73,15 @@ export default function App() {
   const [history, setHistory] = useState<DownloadHistoryItem[]>(() => {
     try {
       const saved = localStorage.getItem('pipo_download_history');
-      if (saved) return JSON.parse(saved);
-    } catch {}
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('Could not read pipo_download_history from localStorage:', e);
+    }
     return [
       {
         id: 'hist-demo-1',
