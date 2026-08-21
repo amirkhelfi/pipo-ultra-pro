@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Download, Link, Clipboard, Sparkles, CheckCircle2, Play, Pause, 
   Volume2, VolumeX, Music, Image, Eye, ThumbsUp, Clock, Share2, 
@@ -31,6 +31,22 @@ export const VideoDownloaderView: React.FC<VideoDownloaderViewProps> = ({
   const [isPlayingPreview, setIsPlayingPreview] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const previewVideoRef = useRef<HTMLVideoElement>(null);
+
+  const togglePlayPreview = () => {
+    if (previewVideoRef.current) {
+      if (isPlayingPreview) {
+        previewVideoRef.current.pause();
+        setIsPlayingPreview(false);
+      } else {
+        previewVideoRef.current.play().then(() => {
+          setIsPlayingPreview(true);
+        }).catch((e) => {
+          console.warn("Autoplay blocked or stream error:", e);
+        });
+      }
+    }
+  };
 
   // Handle URL fetch
   const handleFetchVideo = async (targetUrl?: string) => {
@@ -263,22 +279,23 @@ export const VideoDownloaderView: React.FC<VideoDownloaderViewProps> = ({
             <div className="w-full lg:w-80 flex-shrink-0 space-y-3">
               <div className="relative rounded-2xl overflow-hidden bg-black border border-white/10 aspect-[9/16] sm:aspect-video lg:aspect-[9/14] shadow-lg group">
                 <video
+                  ref={previewVideoRef}
                   src={videoInfo.previewVideoUrl}
                   poster={videoInfo.thumbnail}
                   controls={false}
                   autoPlay={false}
                   loop
+                  playsInline
                   muted={isMuted}
-                  className="w-full h-full object-cover"
-                  ref={(ref) => {
-                    if (ref) {
-                      if (isPlayingPreview) {
-                        ref.play().catch(() => {});
-                      } else {
-                        ref.pause();
-                      }
+                  onPlay={() => setIsPlayingPreview(true)}
+                  onPause={() => setIsPlayingPreview(false)}
+                  onError={() => {
+                    console.warn("Video failed to play directly, trying proxy...");
+                    if (previewVideoRef.current && videoInfo.previewVideoUrl && !videoInfo.previewVideoUrl.startsWith('/api/proxy-video')) {
+                      previewVideoRef.current.src = `/api/proxy-video?url=${encodeURIComponent(videoInfo.previewVideoUrl)}`;
                     }
                   }}
+                  className="w-full h-full object-cover"
                 />
 
                 {/* Custom Overlay Controls */}
@@ -297,7 +314,7 @@ export const VideoDownloaderView: React.FC<VideoDownloaderViewProps> = ({
 
                   <div className="flex items-center justify-center">
                     <button
-                      onClick={() => setIsPlayingPreview(!isPlayingPreview)}
+                      onClick={togglePlayPreview}
                       className="w-12 h-12 rounded-full bg-amber-500/90 text-black flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all"
                     >
                       {isPlayingPreview ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}

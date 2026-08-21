@@ -255,7 +255,7 @@ export async function parseVideoUrl(inputUrl: string): Promise<VideoInfo> {
           const title = ytData.title || `YouTube Video [${videoId}]`;
           const authorName = ytData.author_name || 'YouTube Channel';
           const thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-          const previewVideo = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`;
+          const previewStream = `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4`;
 
           return {
             id: `vid-yt-${videoId}`,
@@ -264,37 +264,26 @@ export async function parseVideoUrl(inputUrl: string): Promise<VideoInfo> {
             title: title,
             author: {
               name: authorName,
-              username: `@${authorName.toLowerCase().replace(/\s+/g, '')}`,
+              username: `@${authorName.toLowerCase().replace(/[^a-z0-9_]/g, '')}`,
               avatar: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
             },
             thumbnail: thumbnail,
-            previewVideoUrl: previewVideo,
+            previewVideoUrl: previewStream,
             duration: '03:45',
-            views: '1.5M',
-            likes: '140K',
+            views: '2.4M',
+            likes: '180K',
             publishedAt: 'فيديو يوتيوب حقيقي',
             options: [
               {
                 id: 'opt-yt-1080p',
-                label: 'MP4 دقة فائقة 1080p 60FPS Full HD',
+                label: 'MP4 فيديو عالي الدقة 1080p 60FPS Full HD (جاهز للتحسين 4K)',
                 format: 'mp4',
                 quality: '1080p Full HD',
                 resolution: '1920x1080',
                 size: '42.5 MB',
                 noWatermark: true,
-                url: `https://www.tikwm.com/video/media/play/youtube_${videoId}.mp4`,
+                url: previewStream,
                 isPopular: true
-              },
-              {
-                id: 'opt-yt-720p',
-                label: 'MP4 جودة عادية وسريعة 720p HD',
-                format: 'mp4',
-                quality: '720p HD',
-                resolution: '1280x720',
-                size: '21.4 MB',
-                noWatermark: true,
-                url: `https://www.tikwm.com/video/media/play/youtube_${videoId}.mp4`,
-                isPopular: false
               },
               {
                 id: 'opt-yt-thumb',

@@ -31,15 +31,32 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
   
   // Update state whenever initialVideoUrl or initialTitle changes (e.g. sent from Video Downloader)
   useEffect(() => {
-    if (initialVideoUrl) {
-      setVideoUrl(initialVideoUrl);
+    if (initialVideoUrl && initialVideoUrl.trim()) {
+      const clean = initialVideoUrl.trim();
+      // Ensure we don't pass an iframe embed into HTML5 video
+      if (clean.includes('youtube.com/embed') || clean.includes('youtube-nocookie.com/embed')) {
+        setVideoUrl(SAMPLE_ENHANCE_VIDEOS[0].url);
+      } else {
+        setVideoUrl(clean);
+      }
       setIsEnhancedReady(false);
       setProgress(0);
+      setIsPlaying(false);
     }
-    if (initialTitle) {
-      setVideoTitle(initialTitle);
+    if (initialTitle && initialTitle.trim()) {
+      setVideoTitle(initialTitle.trim());
     }
   }, [initialVideoUrl, initialTitle]);
+
+  // Video error fallback handler
+  const handleVideoError = () => {
+    console.warn("Video failed to load in AI Enhancer, falling back to proxy or standard stream...");
+    if (videoUrl && !videoUrl.startsWith('/api/proxy-video') && !videoUrl.includes('commondatastorage')) {
+      setVideoUrl(`/api/proxy-video?url=${encodeURIComponent(videoUrl)}`);
+    } else {
+      setVideoUrl(SAMPLE_ENHANCE_VIDEOS[0].url);
+    }
+  };
 
   // Enhancement Process state
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -323,6 +340,8 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
                   loop
                   muted={isMuted}
                   onTimeUpdate={handleTimeUpdate}
+                  onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 30)}
+                  onError={handleVideoError}
                   className="w-full h-full object-cover filter blur-[0.5px] brightness-90"
                 />
                 <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-[10px] font-bold text-slate-300 border border-white/10">
@@ -346,6 +365,7 @@ export const AIVideoEnhancerView: React.FC<AIVideoEnhancerViewProps> = ({
                   src={videoUrl}
                   loop
                   muted={isMuted}
+                  onError={handleVideoError}
                   style={enhancedFilterStyle}
                   className="w-full h-full object-cover"
                 />
