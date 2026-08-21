@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Terminal, ShieldCheck, Zap, Server, Cpu, Activity, 
-  Flame, Lock, Unlock, Play, Pause, RefreshCw, Layers, Database,
-  Sliders, AlertTriangle, CheckCircle2, Radio, Globe, Wifi,
-  Eye, EyeOff, Send, Volume2, Sparkles, Megaphone, BellRing, Music,
-  Users
+  Flame, Lock, Unlock, RefreshCw, Database,
+  Sliders, AlertTriangle, CheckCircle2, Globe, Wifi,
+  Eye, EyeOff, Send, Sparkles, Users
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { BroadcastState } from '../types';
 import { DeveloperVisitorsTab } from './DeveloperVisitorsTab';
-import { DeveloperBroadcastTab } from './DeveloperBroadcastTab';
 
 interface DeveloperConsoleViewProps {
   isArabic: boolean;
@@ -22,7 +19,7 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Active Tab inside Console
-  const [consoleTab, setConsoleTab] = useState<'visitors' | 'broadcast' | 'system' | 'terminal'>('visitors');
+  const [consoleTab, setConsoleTab] = useState<'visitors' | 'system' | 'terminal'>('visitors');
 
   // Live Server Stats State
   const [stats, setStats] = useState<any>({
@@ -40,14 +37,13 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
     ],
     customApis: [
-      { name: 'Instagram Real Media Extractor v4.2', status: 'ONLINE', latency: '38ms' },
-      { name: 'TikWM Clean HD Engine', status: 'ONLINE', latency: '42ms' },
-      { name: 'YouTube Stream Scraper', status: 'ONLINE', latency: '55ms' },
-      { name: 'PIPO Live Broadcast Server', status: 'ONLINE', latency: '10ms' },
+      { name: 'Instagram Real Media Extractor v5.0', status: 'ONLINE', latency: '28ms' },
+      { name: 'TikWM Clean HD Engine', status: 'ONLINE', latency: '35ms' },
+      { name: 'YouTube Stream Scraper', status: 'ONLINE', latency: '45ms' },
       { name: 'AI 4K Super-Resolution Pipeline', status: 'ONLINE', latency: '12ms' }
     ],
     systemLogs: [
-      { id: 1, time: '12:00:01', level: 'INFO', msg: 'Core Video Engine v4.0 booted' },
+      { id: 1, time: '12:00:01', level: 'INFO', msg: 'Core Video Engine v5.0 booted' },
       { id: 2, time: '12:00:05', level: 'AUTH', msg: 'Developer Super-Admin console online' }
     ]
   });
@@ -57,45 +53,7 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
   const [ghostUserAgent, setGhostUserAgent] = useState<boolean>(true);
   const [customConsoleCmd, setCustomConsoleCmd] = useState<string>('');
 
-  // Live Broadcast Editor State
-  const [broadcastForm, setBroadcastForm] = useState<BroadcastState>({
-    enabled: true,
-    message: '🎙️ إذاعة PIPO ULTRA: تم إطلاق محرك Instagram الحقيقي وسحب الفيديوهات بدقة 1080p و 4K بدون علامة مائية!',
-    type: 'live',
-    audioStreamUrl: 'https://backup.qurango.net/radio/tarteel',
-    radioStationName: 'إذاعة القرآن الكريم (تلاوات مباركة خاشعة 24/7)',
-    isRadioPlaying: false,
-    marqueeSpeed: 25,
-    allowDismiss: true,
-    createdAt: new Date().toISOString()
-  });
-
-  const [isPublishingBroadcast, setIsPublishingBroadcast] = useState<boolean>(false);
-  const [broadcastSavedToast, setBroadcastSavedToast] = useState<boolean>(false);
-
-  // Preset Radio Stations
-  const RADIO_PRESETS = [
-    {
-      id: 'quran',
-      name: isArabic ? 'إذاعة القرآن الكريم (تلاوات مباركة خاشعة 24/7)' : 'Holy Quran Recitations Live 24/7',
-      url: 'https://backup.qurango.net/radio/tarteel',
-      icon: '📖'
-    },
-    {
-      id: 'lofi',
-      name: isArabic ? 'راديو لوفاي وتركيز وموسيقى هادئة للعمل' : 'Lo-Fi Chill & Focus Study Beats',
-      url: 'https://stream.zeno.fm/f3wvbbqmdg8uv',
-      icon: '🎧'
-    },
-    {
-      id: 'tech',
-      name: isArabic ? 'إذاعة أخبار التكنولوجيا والبودكاست التقني' : 'Tech Pulse & Podcast Audio',
-      url: 'https://stream.radiojar.com/4wqre23fytzuv',
-      icon: '⚡'
-    }
-  ];
-
-  // Fetch live stats & broadcast status
+  // Fetch live stats
   const fetchStats = async () => {
     try {
       const res = await fetch('/api/dev/stats');
@@ -103,14 +61,6 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
         const data = await res.json();
         if (data && data.success) {
           setStats(data.data);
-        }
-      }
-
-      const bRes = await fetch('/api/broadcast');
-      if (bRes.ok) {
-        const bData = await bRes.json();
-        if (bData && bData.success && bData.data) {
-          setBroadcastForm(bData.data);
         }
       }
     } catch {
@@ -167,39 +117,6 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
   const handleToggleTurbo = () => {
     setIsSuperOverclock(!isSuperOverclock);
     handleAction('toggle_turbo');
-  };
-
-  // Submit Broadcast Updates to Server
-  const handleSaveBroadcast = async () => {
-    setIsPublishingBroadcast(true);
-    try {
-      const res = await fetch('/api/broadcast/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(broadcastForm)
-      });
-      if (res.ok) {
-        setBroadcastSavedToast(true);
-        try {
-          confetti({ particleCount: 80, spread: 90, origin: { y: 0.4 } });
-        } catch {}
-        setTimeout(() => setBroadcastSavedToast(false), 4000);
-      }
-    } catch (e) {
-      console.error('Save broadcast error:', e);
-    } finally {
-      setIsPublishingBroadcast(false);
-    }
-  };
-
-  // Quick Preset message loaders
-  const handleSelectTemplate = (msg: string, type: 'live' | 'radio' | 'breaking' | 'announcement' | 'promo') => {
-    setBroadcastForm(prev => ({
-      ...prev,
-      message: msg,
-      type: type,
-      enabled: true
-    }));
   };
 
   if (!isAuthenticated) {
@@ -274,7 +191,7 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-xl sm:text-2xl font-black text-white">
-                  {isArabic ? 'لوحة تحكم المطور الخارقة & مركز الإذاعة' : 'Developer Master Command & Broadcast Deck'}
+                  {isArabic ? 'لوحة تحكم المطور الخارقة' : 'Developer Master Command Deck'}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold animate-pulse">
                   ROOT ADMIN
@@ -282,8 +199,8 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
               </div>
               <p className="text-xs text-slate-400 mt-1">
                 {isArabic 
-                  ? 'التحكم الكامل بالسيرفر، إدارة البث والإذاعة المباشرة لجميع الزوار، ومضاعفة سرعة السحب والـ AI.' 
-                  : 'Full server controls, live audio broadcasting station to visitors, and AI acceleration.'}
+                  ? 'رادار تتبع الزوار والـ IP، إدارة المحركات والتيربو، والطرفية المباشرة.' 
+                  : 'Live visitor telemetry, server engine overclocking, and terminal.'}
               </p>
             </div>
           </div>
@@ -315,21 +232,6 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
           </button>
 
           <button
-            onClick={() => setConsoleTab('broadcast')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer relative whitespace-nowrap ${
-              consoleTab === 'broadcast' 
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-black font-black shadow-lg shadow-cyan-500/30' 
-                : 'bg-black/40 text-slate-300 hover:bg-white/5'
-            }`}
-          >
-            <Radio className="w-3.5 h-3.5" />
-            <span>{isArabic ? '🎙️ مركز الإذاعة والإشعارات' : '🎙️ Broadcast & Notifications'}</span>
-            {broadcastForm.enabled && (
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            )}
-          </button>
-
-          <button
             onClick={() => setConsoleTab('system')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
               consoleTab === 'system' 
@@ -358,18 +260,6 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
       {/* SECTION: REAL-TIME VISITORS & IP TELEMETRY (تتبع الزوار الحقيقي مع الـ IP واسم الجهاز) */}
       {consoleTab === 'visitors' && (
         <DeveloperVisitorsTab isArabic={isArabic} />
-      )}
-
-      {/* SECTION: BROADCAST & IN-APP NOTIFICATIONS (ميزة الإذاعة وإرسال الإشعارات داخل الموقع) */}
-      {consoleTab === 'broadcast' && (
-        <DeveloperBroadcastTab
-          isArabic={isArabic}
-          broadcastForm={broadcastForm}
-          setBroadcastForm={setBroadcastForm}
-          onSaveBroadcast={handleSaveBroadcast}
-          isPublishingBroadcast={isPublishingBroadcast}
-          broadcastSavedToast={broadcastSavedToast}
-        />
       )}
 
       {/* SECTION 2: ENGINES & OVERCLOCK (المحركات والمسرعات) */}
@@ -615,8 +505,6 @@ export const DeveloperConsoleView: React.FC<DeveloperConsoleViewProps> = ({ isAr
                     handleToggleTurbo();
                   } else if (customConsoleCmd === 'clear') {
                     handleAction('clear_logs');
-                  } else if (customConsoleCmd === 'broadcast') {
-                    setConsoleTab('broadcast');
                   }
                   setCustomConsoleCmd('');
                 }

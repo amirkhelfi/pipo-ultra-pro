@@ -97,30 +97,6 @@ export interface DownloadHistoryItem {
   noWatermark: boolean;
 }
 
-export interface BroadcastState {
-  enabled: boolean;
-  message: string;
-  type: 'live' | 'radio' | 'breaking' | 'announcement' | 'promo';
-  audioStreamUrl?: string;
-  radioStationName?: string;
-  isRadioPlaying: boolean;
-  marqueeSpeed: number;
-  allowDismiss: boolean;
-  createdAt: string;
-}
-
-export interface BroadcastNotification {
-  id: string;
-  title: string;
-  message: string;
-  type: 'live' | 'radio' | 'breaking' | 'announcement' | 'promo' | 'system';
-  createdAt: string;
-  actionUrl?: string;
-  actionLabel?: string;
-  priority?: 'high' | 'normal' | 'urgent';
-  sound?: boolean;
-}
-
 export interface VisitorLogItem {
   id: string;
   ip: string;

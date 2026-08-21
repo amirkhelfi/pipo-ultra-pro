@@ -8,8 +8,6 @@ import { BatchDownloaderView } from './components/BatchDownloaderView';
 import { DownloadHistoryView } from './components/DownloadHistoryView';
 import { AIVideoAssistantModal } from './components/AIVideoAssistantModal';
 import { DeveloperConsoleView } from './components/DeveloperConsoleView';
-import { LiveBroadcastBanner } from './components/LiveBroadcastBanner';
-import { BroadcastNotificationToast } from './components/BroadcastNotificationToast';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { 
   Download, Sparkles, ShieldCheck, Zap, ArrowDownToLine, 
@@ -145,9 +143,6 @@ export default function App() {
   return (
     <div className={`min-h-screen bg-[#070A11] text-slate-100 flex flex-col antialiased ${isArabic ? 'font-sans' : 'font-sans'}`} dir={isArabic ? 'rtl' : 'ltr'}>
       
-      {/* Live Broadcast Header Ticker & Audio Player */}
-      <LiveBroadcastBanner isArabic={isArabic} />
-
       {/* Top Navigation */}
       <Navbar
         activeTab={activeTab}
@@ -278,11 +273,6 @@ export default function App() {
       <PWAInstallPrompt
         isOpen={isInstallModalOpen}
         onClose={() => setIsInstallModalOpen(false)}
-      />
-
-      {/* Real-time In-App Broadcast Notification Toasts (إذاعة الإشعارات داخل الموقع) */}
-      <BroadcastNotificationToast
-        onOpenInstallModal={() => setIsInstallModalOpen(true)}
       />
 
     </div>
